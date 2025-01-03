@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { optionType } from '../types/index.ts'
 import { BsFillCloudsFill } from "react-icons/bs";
+import { FaCloudShowersHeavy } from "react-icons/fa6";
 import axios from 'axios'
 
 interface WeatherData {
@@ -82,12 +83,27 @@ const WeatherCard: React.FC = () => {
     setWeatherData(forecasts);
     console.log(forecasts)
   }
+  
+  const generateIcon = (main: string): React.ReactNode => {
+    let element: React.ReactNode;
+    switch (main.toLowerCase()) {
+      case 'rain':
+        element = <FaCloudShowersHeavy className='text-gruvbox-blue text-6xl mb-4'/>;
+        break;
+     case 'clouds':
+       element = <BsFillCloudsFill className='text-gruvbox-blue text-6xl mb-4'/> 
+       break;
+    }
     
+    return element;
+
+  }
+
   return (
     <>
       <div className=' p-6 rounded shadow-md h-[60vh] w-10/12 flex'>
-        <div className="flex flex-col gap-2 ">
-          <div className="flex flex-row gap-2">
+        <div className="flex flex-col gap-2">
+          <div className="flex flex-row gap-2 ">
             <input
               className='bg-transparent border-gruvbox-blue p-2 w-full border-2 rounded border-gray-100 outline-none focus:ring-4 duration-200 text-gruvbox-white'
               type='text'
@@ -121,9 +137,10 @@ const WeatherCard: React.FC = () => {
         {/* Display Weather Data */}
         { weatherData && 
           <div className="w-full flex flex-col items-center mt-[6rem] text-gruvbox-white">
-            <BsFillCloudsFill className='text-[8rem] text-gruvbox-blue' />
+            { generateIcon(weatherData.weather[0].main) }
             <h2 className="text-6xl font-bold">{ weatherData.main.temp }°C</h2>
             <span className="capitalize">{ weatherData.weather[0].description }</span>
+            <span className="capitalize">{ weatherData.weather[0].main }</span>
             
             <div className="flex flex-row justify-around p-4 w-full">
               <div className='flex flex-col'>
