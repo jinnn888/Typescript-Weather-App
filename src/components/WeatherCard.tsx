@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { optionType } from '../types/index.ts'
+import { BsFillCloudsFill } from "react-icons/bs";
 import axios from 'axios'
 
 interface WeatherData {
@@ -33,12 +34,11 @@ const WeatherCard: React.FC = () => {
 
   const fetchWeatherData = async (lat: number, lon:number) => { 
     const response = await axios.get<WeatherData>(
-      `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${import.meta.env.VITE_REACT_APP_API_KEY}`
+      `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${import.meta.env.VITE_REACT_APP_API_KEY}&units=metric`
     );
     const data = await response.data;
     return data;
   }
-
 
   const fetchCoordinates = async (location: string) => {
     const response = await axios.get(
@@ -73,38 +73,70 @@ const WeatherCard: React.FC = () => {
     console.log(forecasts)
   }
 
+  const searchSubmitHandler = async (location: string) => {
+    const fetchCoords = await fetchCoordinates(location);
+    const { lat, lon } = fetchCoords[0];
+    
+    const forecasts = await fetchWeatherData(lat, lon)
+    setOptions([]);
+    setWeatherData(forecasts);
+    console.log(forecasts)
+  }
     
   return (
     <>
-      <div className='p-6 rounded border shadow-sm'>
-        <div className="flex flex-row gap-2 relative">
-          <input
-            className='p-2 border-2 rounded border-gray-100 outline-none focus:ring-4 duration-200 text-gray-500'
-            type='text'
-            value={location}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLocation(e.target.value)}
-            placeholder='Search place'/> 
+      <div className=' p-6 rounded shadow-md h-[60vh] w-10/12 flex'>
+        <div className="flex flex-col gap-2 ">
+          <div className="flex flex-row gap-2">
+            <input
+              className='bg-transparent border-gruvbox-blue p-2 w-full border-2 rounded border-gray-100 outline-none focus:ring-4 duration-200 text-gruvbox-white'
+              type='text'
+              value={location}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLocation(e.target.value)}
+              placeholder='Search place'/>
+            <button
+              onClick={(e: React.MouseEvent<HTMLButtonElement>) => searchSubmitHandler(location)}
+              className='bg-gruvbox-blue text-gruvbox-white text-sm font-semibold py-1 px-2 rounded'  
+              >Search</button>
+          </div>
+          {/* Options */}
+          { options.length > 1 && 
+          <div className='w-full p-4 rounded bg-gruvbox-blue'>
+            <ul className='text-gruvbox-white'>
+              { options.map((option: optionType, index: number) => (
+                <li key={option.name + '-' + index}>
+                    <button
+                      onClick={(e) => submitOptionHandler(option)}    
+                      className='text-left text-sm w-full px-2 py-1'>
+                      { option.name }
+                    </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+          }
         </div>
 
-        {/* Options */}
-        <div className='absolute p-4'>
-          <ul className='text-gray-600 bg-white'>
-            { options && options.map((option: optionType, index: number) => (
-              <li key={option.name + '-' + index}>
-                  <button
-                    onClick={(e) => submitOptionHandler(option)}    
-                    className='hover:bg-zinc-600 hover:text-white text-left text-sm w-full px-2 py-1'>
-                    { option.name }
-                  </button>
-              </li>
-            ))}
-          </ul>
-        </div>
-
+       
         {/* Display Weather Data */}
         { weatherData && 
-          <div>
-            <h2>{ weatherData.name }</h2>
+          <div className="w-full flex flex-col items-center mt-[6rem] text-gruvbox-white">
+            <BsFillCloudsFill className='text-[8rem] text-gruvbox-blue' />
+            <h2 className="text-6xl font-bold">{ weatherData.main.temp }°C</h2>
+            <span className="capitalize">{ weatherData.weather[0].description }</span>
+            
+            <div className="flex flex-row justify-around p-4 w-full">
+              <div className='flex flex-col'>
+                <span className="font-semibold text-lg">{ weatherData.main.humidity }</span>
+                <span className="font-normal text-md">Humidity</span>
+              </div>
+            <div className='flex flex-col'>
+                <span className="font-semibold text-lg">{ weatherData.wind.speed }Km/H</span>
+                <span className="font-normal text-md">Wind Speed</span>
+            </div>
+
+            </div>
+            
           </div>
         }
       </div>
