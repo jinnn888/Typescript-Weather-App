@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { optionType } from '../types/index.ts'
 import { BsFillCloudsFill } from "react-icons/bs";
 import { FaCloudShowersHeavy } from "react-icons/fa6";
+import { IoSearchSharp } from "react-icons/io5";
 
 interface PropsInterface {
   fetchWeatherData: (lat: number, lon:number) => {};
@@ -83,29 +84,30 @@ const WeatherCard: React.FC<PropsInterface>= ({ fetchWeatherData, fetchCoordinat
     }
     
     return element;
-
   }
 
   return (
     <>
-      <div className=' p-6 rounded shadow-md h-[60vh] w-10/12 flex'>
+      <div className='bg-white p-6 rounded shadow-sm w-10/12 flex flex-col'>
         <div className="flex flex-col gap-2">
           <div className="flex flex-row gap-2 ">
             <input
-              className='bg-transparent border-gruvbox-blue p-2 w-full border-2 rounded border-gray-100 outline-none focus:ring-4 duration-200 text-gruvbox-white'
+              className='p-2 w-full border-2 rounded border-gray-200 outline-none focus:ring-2 duration-200 text-gray-700'
               type='text'
               value={location}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLocation(e.target.value)}
               placeholder='Search place'/>
             <button
               onClick={(e: React.MouseEvent<HTMLButtonElement>) => searchSubmitHandler(location)}
-              className='bg-gruvbox-blue text-gruvbox-white text-sm font-semibold py-1 px-2 rounded'  
-              >Search</button>
+              className='bg-gray-800 flex items-center justify-center text-white w-[60px] text-2xl py-1 px-2 rounded'  
+              >
+              <IoSearchSharp />
+            </button>
           </div>
           {/* Options */}
           { options.length > 1 && 
-          <div className='w-full p-4 rounded bg-gruvbox-blue'>
-            <ul className='text-gruvbox-white'>
+          <div className='w-full p-4 rounded bg-gray-100'>
+            <ul className='text-gray-700'>
               { options.map((option: optionType, index: number) => (
                 <li key={option.name + '-' + index}>
                     <button
@@ -123,7 +125,7 @@ const WeatherCard: React.FC<PropsInterface>= ({ fetchWeatherData, fetchCoordinat
        
         {/* Display Weather Data */}
         { weatherData && 
-          <div className="w-full flex flex-col items-center mt-[6rem] text-gruvbox-white">
+          <div className="w-full flex flex-col items-center mt-[6rem] text-gray-800">
             { generateIcon(weatherData.weather[0].main) }
             <h2 className="text-6xl font-bold">{ weatherData.main.temp }°C</h2>
             <span className="capitalize">{ weatherData.weather[0].description }</span>
@@ -138,7 +140,6 @@ const WeatherCard: React.FC<PropsInterface>= ({ fetchWeatherData, fetchCoordinat
                 <span className="font-semibold text-lg">{ weatherData.wind.speed }Km/H</span>
                 <span className="font-normal text-md">Wind Speed</span>
             </div>
-
             </div>
             
           </div>

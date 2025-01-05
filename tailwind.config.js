@@ -6,16 +6,7 @@ export default {
   ],
   theme: {
     extend: {
-      colors: {
-        gruvbox: {
-          dark: "#282828",
-          yellow: "#fabd2f",
-          white: "#ebdbb2",
-          blue: "#458585",
-          green: "#b8bb26"
-        }
-      }
-    },
   },
+},
   plugins: [],
 }
