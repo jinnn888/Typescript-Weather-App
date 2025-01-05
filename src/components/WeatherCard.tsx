@@ -2,7 +2,11 @@ import React, { useEffect, useState } from 'react'
 import { optionType } from '../types/index.ts'
 import { BsFillCloudsFill } from "react-icons/bs";
 import { FaCloudShowersHeavy } from "react-icons/fa6";
-import axios from 'axios'
+
+interface PropsInterface {
+  fetchWeatherData: (lat: number, lon:number) => {};
+  fetchCoordinates: (location: string) => [];
+}
 
 interface WeatherData {
   name: string;
@@ -28,27 +32,11 @@ interface WeatherData {
   }
 }
 
-const WeatherCard: React.FC = () => {
+
+const WeatherCard: React.FC<PropsInterface>= ({ fetchWeatherData, fetchCoordinates }) => {
   const [location, setLocation] = useState<string>("");
   const [options, setOptions] = useState<[]>([]);
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
-
-  const fetchWeatherData = async (lat: number, lon:number) => { 
-    const response = await axios.get<WeatherData>(
-      `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${import.meta.env.VITE_REACT_APP_API_KEY}&units=metric`
-    );
-    const data = await response.data;
-    return data;
-  }
-
-  const fetchCoordinates = async (location: string) => {
-    const response = await axios.get(
-      `http://api.openweathermap.org/geo/1.0/direct?q=${location}&limit=5&appid=${import.meta.env.VITE_REACT_APP_API_KEY}`
-    );
-
-    const data = await response.data;
-    return data;
-  }
 
   useEffect(() => {
       setOptions([])
@@ -57,7 +45,6 @@ const WeatherCard: React.FC = () => {
       }
       const fetch = async () => {
         const result = await fetchCoordinates(location.trim())
-        console.log(result)
 
         setOptions(result);
 
@@ -141,7 +128,7 @@ const WeatherCard: React.FC = () => {
             <h2 className="text-6xl font-bold">{ weatherData.main.temp }°C</h2>
             <span className="capitalize">{ weatherData.weather[0].description }</span>
             <span className="capitalize">{ weatherData.weather[0].main }</span>
-            
+                  
             <div className="flex flex-row justify-around p-4 w-full">
               <div className='flex flex-col'>
                 <span className="font-semibold text-lg">{ weatherData.main.humidity }</span>
